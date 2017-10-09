@@ -6,7 +6,7 @@ class OS {
 	public CPU cpu;
 	public IOdevice io;
 	public boolean isCPUAvailable = true; // initially this had no value
-	public ProcessTable process_Table;
+	// public ProcessTable process_Table;
 	public ArrayList<Process> New_Queue;
 	public ArrayList<Process> Ready_Queue;
 	public ArrayList<Process> Wait_Queue;
@@ -23,7 +23,7 @@ class OS {
 	// Record the time of every operation for computing your latency and
 	// response
 	public void FCFS(Process process) {
-		int timeslice = 999999999;
+		int timeslice = 99999;
 		boolean done = false;
 		CPU cpu = new CPU(timeslice);
 
@@ -51,16 +51,16 @@ class OS {
 			case "Running":// Process is now being executed
 				System.out.println("Executing process...");
 				CPU.BubbleSort(Ready_Queue.get(0));
-				if (wait_for_IO == true) {
-					state = "Waiting";
-				} else {
+				Wait_Queue.add(Ready_Queue.get(0));
+				if (process.getBurstSequence() == null) {
+					Wait_Queue.remove(0);
 					state = "Terminated";
 				}
+				state = "Waiting";
 
 			case "Waiting":// Process is waiting on I/O
 				System.out.println("Waiting on I/O");
-				while (wait_for_IO == true) {
-				}
+				IOdevice.BubbleSort(Wait_Queue.get(0));
 				state = "Running";
 
 			case "Terminated":// Process has finished executing
@@ -79,7 +79,7 @@ class OS {
 	}
 
 	public void RoundRobin(Process process) {
-		int timeslice = 3;
+		int timeslice = 10;
 		boolean done = false;
 		CPU cpu = new CPU(timeslice);
 
@@ -106,16 +106,18 @@ class OS {
 			case "Running":// Process is now being executed
 				System.out.println("Executing process...");
 				CPU.BubbleSort(Ready_Queue.get(0));
-				if (wait_for_IO == true) {
-					state = "Waiting";
-				} else {
+				Wait_Queue.add(Ready_Queue.get(0));
+				if (process.getBurstSequence() == null) {// Need to circle queue
+															// if timeslice is
+															// surpasses
+					Wait_Queue.remove(0);
 					state = "Terminated";
 				}
+				state = "Waiting";
 
 			case "Waiting":// Process is waiting on I/O
 				System.out.println("Waiting on I/O");
-				while (wait_for_IO == true) {
-				}
+				IOdevice.BubbleSort(Wait_Queue.get(0));
 				state = "Running";
 
 			case "Terminated":// Process has finished executing
@@ -134,8 +136,8 @@ class OS {
 	}
 
 	public void staticPriority(Process process) {
-		int timeslice = 999999999;// This will need to change if we want to make
-									// the lower priority processes preemptive
+		int timeslice = 10;// This may need to change if we want to make
+							// the lower priority processes preemptive
 		boolean done = false;
 		CPU cpu = new CPU(timeslice);
 
@@ -163,16 +165,16 @@ class OS {
 			case "Running":// Process is now being executed
 				System.out.println("Executing process...");
 				CPU.BubbleSort(Ready_Queue.get(0));
-				if (wait_for_IO == true) {
-					state = "Waiting";
-				} else {
+				Wait_Queue.add(Ready_Queue.get(0));
+				if (process.getBurstSequence() == null) {
+					Wait_Queue.remove(0);
 					state = "Terminated";
 				}
+				state = "Waiting";
 
 			case "Waiting":// Process is waiting on I/O
 				System.out.println("Waiting on I/O");
-				while (wait_for_IO == true) {
-				}
+				IOdevice.BubbleSort(Wait_Queue.get(0));
 				state = "Running";
 
 			case "Terminated":// Process has finished executing
